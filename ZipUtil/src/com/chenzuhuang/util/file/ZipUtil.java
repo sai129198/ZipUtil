@@ -18,6 +18,8 @@ import java.util.List;
  */
 public class ZipUtil {
 
+    private static String ZIP_ENCODING = "GBK";
+
     /**
      * 压缩文件
      * @param srcFile 需要压缩的文件
@@ -38,6 +40,7 @@ public class ZipUtil {
 
         FileInputStream fileInput = new FileInputStream(srcFile);
         ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(zipFile));
+        zipOutput.setEncoding(ZIP_ENCODING);
 
         byte[] buffer = new byte[2048];
         ZipEntry zipEntry = new ZipEntry(srcFile.getName());	//压缩包里面的文件名
@@ -50,6 +53,25 @@ public class ZipUtil {
         }
         fileInput.close();
         zipOutput.close();
+    }
+
+    /**
+     * 压缩一个文件。若同名文件存在，则覆盖之。
+     * @param srcFile
+     * @param zipFile
+     * @throws Exception
+     */
+    public static void zipFile(File srcFile, File zipFile) throws Exception {
+        zipFile(srcFile, zipFile, true);
+    }
+
+    /**
+     * 与压缩一个文件。生成的文件名为【源文件名.zip】，若有同名文件，则覆盖之。
+     * @param srcFile
+     * @throws Exception
+     */
+    public static void zipFile(File srcFile) throws Exception {
+        zipFile(srcFile, new File(srcFile.getAbsolutePath() + ".zip"), true);
     }
 
     /**
@@ -71,7 +93,9 @@ public class ZipUtil {
         }
 
         ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(zipFile));
+        zipOutput.setEncoding(ZIP_ENCODING);
         zipDirectory(zipOutput, srcDir, srcDir.getName());
+        zipOutput.close();
     }
 
     /**
@@ -146,7 +170,7 @@ public class ZipUtil {
         }
 
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile));
-
+        zipOutputStream.setEncoding(ZIP_ENCODING);
         byte[] buffer = new byte[2048];
         int length = 0;
         for (File file: files) {
@@ -193,21 +217,14 @@ public class ZipUtil {
         zipFiles(files, zipFile, true);
     }
 
-
-
     //test
     public static void main(String[] args) throws Exception {
-//		zipFile(new File("D:/Test.java"), new File("D:/Test.zip"), false);
-//        zipDiretory(new File("D:/Temp"), new File("D:/Temp.zip"), true);
-
         List<File> fileList = new ArrayList<File>();
         fileList.add(new File("D:/1.txt"));
         fileList.add(new File("D:/2.txt"));
         File[] files = {new File("D:/1.txt"), new File("D:/2.txt")};
-//        zipFiles(fileList.toArray(new File[fileList.size()]), new File("D:/test.zip"), true);
         zipFiles(fileList, new File("D:/test.zip"));
         zipDirectory(new File("D:/user"), new File("D:/user.zip"), true);
     }
 
 }
-
