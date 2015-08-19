@@ -6,6 +6,7 @@ import org.apache.tools.zip.ZipOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +28,12 @@ public class ZipUtil {
      * @param overwrite 当文件已存在时是否覆盖
      * @throws Exception
      */
-    public static void zipFile(File srcFile, File zipFile, boolean overwrite) throws Exception {
+    public static void zipFile(File srcFile, File zipFile, boolean overwrite) throws IllegalArgumentException, IOException {
         if (zipFile == null || srcFile == null) {
-            throw new Exception("zipFile和srcFile不能为空!");
+            throw new IllegalArgumentException("zipFile和srcFile不能为空!");
         }
         if (!overwrite && zipFile.exists()) {
-            throw new Exception(zipFile.getAbsolutePath() + "文件已存在，参数设定了不能覆盖。");
+            throw new IOException(zipFile.getAbsolutePath() + "文件已存在，参数设定了不能覆盖。");
         }
         if (!zipFile.exists()) {
             zipFile.createNewFile();
@@ -81,12 +82,12 @@ public class ZipUtil {
      * @param overwrite 是否覆盖已存在文件
      * @throws Exception
      */
-    public static void zipDirectory(File srcDir, File zipFile, boolean overwrite) throws Exception {
+    public static void zipDirectory(File srcDir, File zipFile, boolean overwrite) throws IllegalArgumentException, IOException {
         if (zipFile == null || srcDir == null) {
-            throw new Exception("zipFile和srcDir不能为空!");
+            throw new IllegalArgumentException("zipFile和srcDir不能为空!");
         }
         if (!overwrite && zipFile.exists()) {
-            throw new Exception(zipFile.getAbsolutePath() + "文件已存在，参数设定了不能覆盖。");
+            throw new IOException(zipFile.getAbsolutePath() + "文件已存在，参数设定了不能覆盖。");
         }
         if (!zipFile.exists()) {
             zipFile.createNewFile();
@@ -105,7 +106,7 @@ public class ZipUtil {
      * @param base 当前文件在压缩包里的绝对名称
      * @throws Exception
      */
-    private static void zipDirectory(ZipOutputStream zipOutput, File file, String base) throws Exception {
+    private static void zipDirectory(ZipOutputStream zipOutput, File file, String base) throws IllegalArgumentException, IOException {
         if (file.isDirectory()) {
             File[] fileList = file.listFiles();
             zipOutput.putNextEntry(new ZipEntry(base + "/"));
@@ -123,7 +124,6 @@ public class ZipUtil {
             byte[] buffer = new byte[2048];
             while ( (length = fileInputStream.read(buffer)) != -1) {
                 zipOutput.write(buffer, 0, length);
-                System.out.println(length);
                 zipOutput.flush();
             }
             fileInputStream.close();
@@ -136,7 +136,7 @@ public class ZipUtil {
      * @param zipFile 压缩产生的文件
      * @throws Exception
      */
-    public static void zipDirectory(File srcDir, File zipFile) throws Exception {
+    public static void zipDirectory(File srcDir, File zipFile) throws IllegalArgumentException, IOException {
         zipDirectory(srcDir, zipFile, true);
     }
 
@@ -144,7 +144,7 @@ public class ZipUtil {
      * 压缩一个目录。压缩输出的文件名为(目录名.zip)
      * @param srcDir
      */
-    public static void zipDirectory(File srcDir) throws Exception {
+    public static void zipDirectory(File srcDir) throws IllegalArgumentException, IOException {
         zipDirectory(srcDir, new File(srcDir.getAbsolutePath()+".zip"), true);
     }
 
@@ -155,15 +155,15 @@ public class ZipUtil {
      * @param overwrite 如存在同名文件，是否覆盖
      * @throws Exception
      */
-    public static void zipFiles(File[] files, File zipFile, boolean overwrite) throws Exception {
+    public static void zipFiles(File[] files, File zipFile, boolean overwrite) throws IllegalArgumentException, IOException {
         if (zipFile == null || files == null) {
-            throw new Exception("zipFile和srcDir不能为空!");
+            throw new IllegalArgumentException("zipFile和srcDir不能为空!");
         }
         if (files.length == 0) {
-            throw new Exception("不能对一个空的文件列表进行压缩");
+            throw new IllegalArgumentException("不能对一个空的文件列表进行压缩");
         }
         if (!overwrite && zipFile.exists()) {
-            throw new Exception(zipFile.getAbsolutePath() + "文件已存在，参数设定了不能覆盖。");
+            throw new IOException(zipFile.getAbsolutePath() + "文件已存在，参数设定了不能覆盖。");
         }
         if (!zipFile.exists()) {
             zipFile.createNewFile();
@@ -193,7 +193,7 @@ public class ZipUtil {
      * @param overwrite 如果已经存在同名文件，是否覆盖。
      * @throws Exception
      */
-    public static void zipFiles(List<File> fileList, File zipFile, boolean overwrite) throws Exception {
+    public static void zipFiles(List<File> fileList, File zipFile, boolean overwrite) throws IllegalArgumentException, IOException {
         zipFiles(fileList.toArray(new File[fileList.size()]), zipFile, overwrite);
     }
 
@@ -203,7 +203,7 @@ public class ZipUtil {
      * @param zipFile
      * @throws Exception
      */
-    public static void zipFiles(List<File> fileList, File zipFile) throws Exception {
+    public static void zipFiles(List<File> fileList, File zipFile) throws IllegalArgumentException, IOException {
         zipFiles(fileList.toArray(new File[fileList.size()]), zipFile, true);
     }
 
@@ -213,18 +213,22 @@ public class ZipUtil {
      * @param zipFile 压缩后生成的文件
      * @throws Exception
      */
-    public static void zipFiles(File[] files, File zipFile) throws Exception {
+    public static void zipFiles(File[] files, File zipFile) throws IllegalArgumentException, IOException {
         zipFiles(files, zipFile, true);
     }
 
-    //test
+    /**
+     * Test
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         List<File> fileList = new ArrayList<File>();
         fileList.add(new File("D:/1.txt"));
         fileList.add(new File("D:/2.txt"));
         File[] files = {new File("D:/1.txt"), new File("D:/2.txt")};
         zipFiles(fileList, new File("D:/test.zip"));
-        zipDirectory(new File("D:/user"), new File("D:/user.zip"), true);
+        zipDirectory(new File("D:/temp"), new File("D:/temp.zip"), true);
     }
 
 }
