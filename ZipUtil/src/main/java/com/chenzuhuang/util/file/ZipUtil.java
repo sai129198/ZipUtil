@@ -22,7 +22,7 @@ public class ZipUtil {
     /**
      * 防止压缩文件名中文乱码
      */
-    private static String ZIP_ENCODING = "GBK";
+    private static final String ZIP_ENCODING = "GBK";
 
     /**
      * 压缩文件
@@ -50,7 +50,7 @@ public class ZipUtil {
         ZipEntry zipEntry = new ZipEntry(srcFile.getName());	//压缩包里面的文件名
         zipOutput.putNextEntry(zipEntry);
 
-        int len = 0;
+        int len;
         while ((len = fileInput.read(buffer)) != -1) {
             zipOutput.write(buffer, 0, len);
             zipOutput.flush();
@@ -61,8 +61,8 @@ public class ZipUtil {
 
     /**
      * 压缩一个文件。若同名文件存在，则覆盖之。
-     * @param srcFile
-     * @param zipFile
+     * @param srcFile 需要压缩的文件
+     * @param zipFile 压缩生成的文件
      * @throws IOException
      */
     public static void zipFile(File srcFile, File zipFile) throws IOException {
@@ -71,8 +71,8 @@ public class ZipUtil {
 
     /**
      * 与压缩一个文件。生成的文件名为【源文件名.zip】，若有同名文件，则覆盖之。
-     * @param srcFile
-     * @throws IOException
+     * @param srcFile 需要压缩的文件
+     * @throws IOException 压缩生成的文件
      */
     public static void zipFile(File srcFile) throws IOException {
         zipFile(srcFile, new File(srcFile.getAbsolutePath() + ".zip"), true);
@@ -104,7 +104,7 @@ public class ZipUtil {
 
     /**
      * 压缩目录的辅助方法。递归检查子目录。
-     * @param zipOutput
+     * @param zipOutput zip输出流
      * @param file 当前文件
      * @param base 当前文件在压缩包里的绝对名称
      * @throws IOException
@@ -143,7 +143,7 @@ public class ZipUtil {
 
     /**
      * 压缩一个目录。压缩输出的文件名为(目录名.zip)
-     * @param srcDir
+     * @param srcDir 需要压缩的目录
      * @throws IOException
      */
     public static void zipDirectory(File srcDir) throws IOException {
@@ -221,14 +221,14 @@ public class ZipUtil {
 
     /**
      * 测试方法
-     * @param args
+     * @param args 参数
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
         List<File> fileList = new ArrayList<File>();
         fileList.add(new File("D:/1.txt"));
         fileList.add(new File("D:/2.txt"));
-        File[] files = {new File("D:/1.txt"), new File("D:/2.txt")};
+//        File[] files = {new File("D:/1.txt"), new File("D:/2.txt")};
         zipFiles(fileList, new File("D:/test.zip"));
         zipDirectory(new File("D:/user"), new File("D:/user.zip"), true);
     }
