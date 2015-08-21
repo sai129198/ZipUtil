@@ -25,6 +25,11 @@ public class ZipUtil {
     private static final String ZIP_ENCODING = "GBK";
 
     /**
+     * 私有的构造方法
+     */
+    private ZipUtil(){}
+
+    /**
      * 压缩文件
      * @param srcFile 需要压缩的文件
      * @param zipFile 压缩后的文件(.zip后缀需要自己添加)
